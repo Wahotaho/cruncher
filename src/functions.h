@@ -3,6 +3,7 @@ void load_board ();
 void parse_rank (char * rank, char * pieces);
 void split (char * array[], char * buf, char * splitter);
 void print_position ();
+int is_piece (char p);
 //
 
 void load_board () {
@@ -32,8 +33,7 @@ void parse_rank (char * rank, char * pieces) {
           i++;
         }
 
-      } else if (pieces[j] == 'K' || pieces[j] == 'Q' || pieces[j] == 'B' || pieces[j] == 'N' || pieces[j] == 'R' || pieces[j] == 'P' || pieces[j] == 'k' || pieces[j] == 'q'
-      || pieces[j] == 'b' || pieces[j] == 'n' || pieces[j] == 'r' || pieces[j] == 'p') {
+      } else if (is_piece(pieces[j])) {
 
         rank[i] = pieces[j];
         i++;
@@ -69,4 +69,9 @@ void print_position () {
     printf("\n");
   }
   printf("%s\n", "");
+}
+
+int is_piece (char p) {
+  return (p == 'K' || p == 'Q' || p == 'B' || p == 'N' || p == 'R' || p == 'P' || p == 'k' || p == 'q'
+  || p == 'b' || p == 'n' || p == 'r' || p == 'p');
 }

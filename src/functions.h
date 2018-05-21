@@ -18,9 +18,10 @@ void load_board () {
 
 void parse_rank (char * rank, char * pieces) {
   int j = 0;
+  int i = 0;
   int num;
 
-  for (int i = 0; i < wid; i++) {
+  while (i < wid) {
 
       if (pieces[j] > 47 && pieces[j] < 58) {
 
@@ -28,15 +29,15 @@ void parse_rank (char * rank, char * pieces) {
 
         while (num > 0) {
           rank[i] = '_';
-          i++;
           num--;
+          i++;
         }
 
       } else if (pieces[j] == 'K' || pieces[j] == 'Q' || pieces[j] == 'B' || pieces[j] == 'N' || pieces[j] == 'R' || pieces[j] == 'P' || pieces[j] == 'k' || pieces[j] == 'q'
       || pieces[j] == 'b' || pieces[j] == 'n' || pieces[j] == 'r' || pieces[j] == 'p') {
 
         rank[i] = pieces[j];
-
+        i++;
       } else {
         printf("%s\n", "Invalid position.");
         exit(1);

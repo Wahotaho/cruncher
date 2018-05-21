@@ -11,7 +11,6 @@ void load_board () {
 
   for (int i = 0; i < len; i++) {
     parse_rank(board[i], pos_array[i]);
-    printf("%s\n", board[i]);
   }
 
 }
@@ -69,5 +68,5 @@ void print_position () {
     }
     printf("\n");
   }
-
+  printf("%s\n", "");
 }

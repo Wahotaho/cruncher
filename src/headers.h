@@ -12,3 +12,7 @@ void print_position ();
 // Function definitions for "pieces.h"
 int is_piece (char p);
 //
+
+// Function definitions for "misc.h"
+void split (char * array[], char * buf, char * splitter);
+//

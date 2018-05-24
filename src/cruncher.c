@@ -18,6 +18,7 @@ char board[wid][len];
 
 // Header files
 
+#include "misc.h"
 #include "headers.h"
 #include "board.h"
 #include "position.h"

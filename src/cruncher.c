@@ -8,7 +8,7 @@
 #define wid 8
 
 // Global Variables
-char * position;
+char * position_string;
 char * side_move;
 char * castling_options;
 char * en_passant_square;
@@ -33,7 +33,7 @@ int main (int argc, char * argv[]) {
   //
 
   // Initialize position components
-  position = argv[1];
+  position_string = argv[1];
   side_move = argv[2];
   castling_options = argv[3];
   en_passant_square = argv[4];

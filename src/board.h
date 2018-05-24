@@ -1,6 +1,6 @@
 void load_board () {
   char * pos_array[len];
-  split (pos_array, position, "/");
+  split (pos_array, position_string, "/");
 
   for (int i = 0; i < len; i++) {
     parse_rank(board[i], pos_array[i]);

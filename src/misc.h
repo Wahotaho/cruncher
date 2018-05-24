@@ -7,3 +7,15 @@ void split (char * array[], char * buf, char * splitter) {
       p = strtok (NULL, splitter);
   }
 }
+
+_Bool string_contains (char * str, char s) {
+
+  int len = strlen(str);
+
+  for (int i = 0; i < len; i++) {
+      if (str[i] == s) return 1;
+  }
+
+    return 0;
+
+}

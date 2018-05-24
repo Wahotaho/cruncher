@@ -4,17 +4,21 @@
 #include <string.h>
 
 // Global Constants
-#define len 8
-#define wid 8
+#define LEN 8
+#define WID 8
+#define POSSIBLE_MOVES 256
+#define FEN_STRING_LEN 128
+#define SIDE_TO_MOVE_LEN 1
+#define SQUARE_LEN 2
 
 // Global Variables
-char * position_string;
-char * side_move;
-char * castling_options;
-char * en_passant_square;
-double half_move_clock;
-int full_move_number;
-char board[wid][len];
+char * current_position_string;
+char * current_side_move;
+char * current_castling_options;
+char * current_en_passant_square;
+double current_half_move_clock;
+int current_full_move_number;
+char current_board[WID][LEN];
 
 // Header files
 
@@ -34,19 +38,23 @@ int main (int argc, char * argv[]) {
   //
 
   // Initialize position components
-  position_string = argv[1];
-  side_move = argv[2];
-  castling_options = argv[3];
-  en_passant_square = argv[4];
-  sscanf(argv[5], "%lf", &half_move_clock);
-  sscanf(argv[6], "%d", &full_move_number);
+  current_position_string = argv[1];
+  current_side_move = argv[2];
+  current_castling_options = argv[3];
+  current_en_passant_square = argv[4];
+  sscanf(argv[5], "%lf", &current_half_move_clock);
+  sscanf(argv[6], "%d", &current_full_move_number);
+  //
+
+  // Create current position struct
+  struct position current_position = position_init(current_position_string, current_side_move, current_castling_options, current_en_passant_square, current_half_move_clock, current_full_move_number);
   //
 
   // Load position into board
-  load_board();
+  load_board_from_struct(&current_position);
   //
 
-  print_position();
+  print_position_from_struct (current_position);
 
   return 0;
 }

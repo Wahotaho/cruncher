@@ -1,11 +1,31 @@
 void load_board () {
-  char * pos_array[len];
-  split (pos_array, position_string, "/");
+  char * pos_array[LEN];
 
-  for (int i = 0; i < len; i++) {
-    parse_rank(board[i], pos_array[i]);
+  char temp[FEN_STRING_LEN];
+  strcpy(temp, current_position_string);
+
+  split (pos_array, current_position_string, "/");
+
+  for (int i = 0; i < LEN; i++) {
+    parse_rank(current_board[i], pos_array[i]);
   }
 
+  strcpy(current_position_string, temp);
+}
+
+void load_board_from_struct (struct position * pos) {
+  char * pos_array[LEN];
+
+  char temp[FEN_STRING_LEN];
+  strcpy(temp, pos->position_string);
+
+  split (pos_array, pos->position_string, "/");
+
+  for (int i = 0; i < LEN; i++) {
+    parse_rank(pos -> board[i], pos_array[i]);
+  }
+
+  strcpy(pos->position_string, temp);
 }
 
 void parse_rank (char * rank, char * pieces) {
@@ -13,7 +33,7 @@ void parse_rank (char * rank, char * pieces) {
   int i = 0;
   int num;
 
-  while (i < wid) {
+  while (i < WID) {
 
       if (pieces[j] > 47 && pieces[j] < 58) {
 
@@ -36,5 +56,7 @@ void parse_rank (char * rank, char * pieces) {
 
         j++;
   }
+
+  rank[WID] = 0;
 
 }

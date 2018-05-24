@@ -18,11 +18,14 @@ char board[wid][len];
 
 // Header files
 
-#include "functions.h"
+#include "headers.h"
+#include "board.h"
+#include "position.h"
+#include "pieces.h"
 
 int main (int argc, char * argv[]) {
 
-  // Test if argument exists
+  // Test if arguments exists
   if (argc != 7) {
       printf("%s\n", "Usage: ./cruncher <fen_String>");
       exit(1);

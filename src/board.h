@@ -1,11 +1,3 @@
-// Function definitions
-void load_board ();
-void parse_rank (char * rank, char * pieces);
-void split (char * array[], char * buf, char * splitter);
-void print_position ();
-int is_piece (char p);
-//
-
 void load_board () {
   char * pos_array[len];
   split (pos_array, position, "/");
@@ -55,23 +47,4 @@ void split (char * array[], char * buf, char * splitter) {
       array[i++] = p;
       p = strtok (NULL, splitter);
   }
-}
-
-void print_position () {
-  printf(" ");
-  for (int i = 0; i < wid * 2 - 1; i++) printf("_");
-  printf("\n");
-  for (int i = 0; i < len; i++) {
-    printf("%s", "|");
-    for (int j = 0; j < wid; j++) {
-      printf("%c|", board[i][j]);
-    }
-    printf("\n");
-  }
-  printf("%s\n", "");
-}
-
-int is_piece (char p) {
-  return (p == 'K' || p == 'Q' || p == 'B' || p == 'N' || p == 'R' || p == 'P' || p == 'k' || p == 'q'
-  || p == 'b' || p == 'n' || p == 'r' || p == 'p');
 }

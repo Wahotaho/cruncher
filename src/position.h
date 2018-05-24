@@ -13,24 +13,12 @@ struct position position_init (char * str, char * side, char * castling_options,
 
   pos.half_move_clock = half_moves;
   pos.full_move_number = full_moves;
+
+  load_board(&pos);
   return pos;
 }
 
-void print_position () {
-  printf(" ");
-  for (int i = 0; i < WID * 2 - 1; i++) printf("_");
-  printf("\n");
-  for (int i = 0; i < LEN; i++) {
-    printf("%s", "|");
-    for (int j = 0; j < WID; j++) {
-      printf("%c|", current_board[i][j]);
-    }
-    printf("\n");
-  }
-  printf("%s\n", "");
-}
-
-void print_position_from_struct (struct position pos) {
+void print_position (struct position pos) {
   printf(" ");
   for (int i = 0; i < WID * 2 - 1; i++) printf("_");
   printf("\n");

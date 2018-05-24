@@ -14,15 +14,13 @@ struct position {
 //
 
 // Function definitions for "board.h"
-void load_board ();
-void load_board_from_struct (struct position * pos);
+void load_board (struct position * pos);
 void parse_rank (char * rank, char * pieces);
 //
 
 // Function definitions "position.h"
 struct position position_init (char * str, char * side, char * castling_options, char * en_passant, double half_moves, int full_moves);
-void print_position_from_struct (struct position pos) ;
-void print_position ();
+void print_position (struct position pos) ;
 //
 
 // Function definitions for "pieces.h"

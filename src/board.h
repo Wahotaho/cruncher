@@ -1,19 +1,4 @@
-void load_board () {
-  char * pos_array[LEN];
-
-  char temp[FEN_STRING_LEN];
-  strcpy(temp, current_position_string);
-
-  split (pos_array, current_position_string, "/");
-
-  for (int i = 0; i < LEN; i++) {
-    parse_rank(current_board[i], pos_array[i]);
-  }
-
-  strcpy(current_position_string, temp);
-}
-
-void load_board_from_struct (struct position * pos) {
+void load_board (struct position * pos) {
   char * pos_array[LEN];
 
   char temp[FEN_STRING_LEN];

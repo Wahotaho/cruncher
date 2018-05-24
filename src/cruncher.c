@@ -18,7 +18,7 @@ char * current_castling_options;
 char * current_en_passant_square;
 double current_half_move_clock;
 int current_full_move_number;
-char current_board[WID][LEN];
+// char current_board[WID][LEN];
 
 // Header files
 
@@ -50,11 +50,7 @@ int main (int argc, char * argv[]) {
   struct position current_position = position_init(current_position_string, current_side_move, current_castling_options, current_en_passant_square, current_half_move_clock, current_full_move_number);
   //
 
-  // Load position into board
-  load_board_from_struct(&current_position);
-  //
-
-  print_position_from_struct (current_position);
+  print_position (current_position);
 
   return 0;
 }

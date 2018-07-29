@@ -665,6 +665,7 @@ void white_pawn_moves (struct position * p, char rank, char file) {
         p -> num_moves++;
       }
     }
+  }
 
     // Capture LEFT
     if (file > 0) {
@@ -716,7 +717,6 @@ void white_pawn_moves (struct position * p, char rank, char file) {
       p -> num_moves++;
     }
   }
-}
 
 void black_pawn_moves (struct position * p, char rank, char file) {
 

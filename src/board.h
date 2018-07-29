@@ -21,7 +21,6 @@ void parse_rank (char * rank, char * pieces) {
   while (i < WID) {
 
       if (pieces[j] > 47 && pieces[j] < 58) {
-
         num = pieces[j] - 48;
 
         while (num > 0) {

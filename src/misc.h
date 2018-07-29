@@ -13,9 +13,24 @@ _Bool string_contains (char * str, char s) {
   int len = strlen(str);
 
   for (int i = 0; i < len; i++) {
-      if (str[i] == s) return 1;
+      if (str[i] == s) return TRUE;
   }
 
-    return 0;
+    return FALSE;
 
+}
+
+int abs (int a) {
+  if (a < 0) return -a;
+  return a;
+}
+
+char toUpper (char c) {
+  if (c < 123 && c > 96) return c - 32;
+  return c;
+}
+
+char toLower (char c) {
+  if (c < 91 && c > 64) return c + 32;
+  return c;
 }

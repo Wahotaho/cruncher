@@ -57,7 +57,8 @@ int main (int argc, char * argv[]) {
 
   printf("\nKing checked? : %d\n", white_king_checked(&initial_position, 4, 4));
 
-  /*srand(time(NULL));
+
+  srand(time(NULL));
   int chosen_move = 256;
   struct move m;
 
@@ -73,7 +74,7 @@ int main (int argc, char * argv[]) {
     printf("%s\n", "");
     make_move(&initial_position, &m);
     printf("%s\n", "");
-  }*/
+  }
 
   return 0;
 }

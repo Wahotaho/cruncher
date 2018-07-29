@@ -578,7 +578,7 @@ void white_knight_moves (struct position * p, char rank, char file) {
 
 void black_knight_moves (struct position * p, char rank, char file) {
 
-  char promotion_piece = 'N';
+  char promotion_piece = 'n';
 
   // UP MOVES
   if (rank - 2 > -1) {
@@ -719,9 +719,10 @@ void white_pawn_moves (struct position * p, char rank, char file) {
 }
 
 void black_pawn_moves (struct position * p, char rank, char file) {
+
   // One move forward
   if (p -> board [rank + 1][file + 0] == '_') {
-    if (rank + 1 != WID - 1) {
+    if (rank < LEN - 2) {
       p -> moves[p -> num_moves] = move_init(file, rank, file , rank + 1, 'p', 0);
       p -> num_moves++;
     } else { // PROMOTION
@@ -742,7 +743,7 @@ void black_pawn_moves (struct position * p, char rank, char file) {
         p -> num_moves++;
       }
     }
-
+  }
     // Capture LEFT
     if (file > 0) {
       if (is_white(p -> board [rank + 1][file - 1])) {
@@ -793,7 +794,7 @@ void black_pawn_moves (struct position * p, char rank, char file) {
       p -> num_moves++;
     }
   }
-}
+
 
 void white_king_moves (struct position * p, char rank, char file) {
 

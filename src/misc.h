@@ -25,6 +25,11 @@ int abs (int a) {
   return a;
 }
 
+double abs_double (double a) {
+  if (a < 0) return a * -1.0;
+  return a;
+}
+
 char toUpper (char c) {
   if (c < 123 && c > 96) return c - 32;
   return c;

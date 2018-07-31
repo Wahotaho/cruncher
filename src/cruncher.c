@@ -13,6 +13,8 @@
 #define SQUARE_LEN 2
 #define TRUE 1
 #define FALSE 0
+#define CHECKMATE_VAL 90000.0
+#define MAX_GAME_LEN 2048
 
 // Global Variables
 char * initial_position_string;
@@ -21,6 +23,12 @@ char * initial_castling_options;
 char * initial_en_passant_square;
 double initial_half_move_clock;
 int initial_full_move_number;
+int levels_deep = 0;
+
+struct node root;
+struct node * heads;
+struct node * tails;
+int initial_calculating_depth;
 
 // Header files
 
@@ -32,6 +40,7 @@ int initial_full_move_number;
 #include "move.h"
 #include "evaluate.h"
 #include "game_nodes.h"
+#include "calculate.h"
 
 int main (int argc, char * argv[]) {
 
@@ -51,30 +60,37 @@ int main (int argc, char * argv[]) {
   sscanf(argv[6], "%d", &initial_full_move_number);
   //
 
+  // Initialize head a tail lists
+
+  heads = malloc(sizeof(struct node) * MAX_GAME_LEN);
+  tails = malloc(sizeof(struct node) * MAX_GAME_LEN);
+
+  for (int i = 0; i < MAX_GAME_LEN; i++) {
+    heads[i].neighbor = NULL;
+    tails[i].neighbor = NULL;
+  }
+
   // Create initial position struct
   struct position initial_position = position_init(initial_position_string, initial_side_move, initial_castling_options, initial_en_passant_square, initial_half_move_clock, initial_full_move_number);
   //
 
-  printf("\nKing checked? : %d\n", white_king_checked(&initial_position, 4, 4));
+  go_infinite(initial_position);
 
-
-  srand(time(NULL));
-  int chosen_move = 256;
+  /*srand(time(NULL));
   struct move m;
 
-  while (!initial_position.game_ended) {
-    chosen_move = rand () % initial_position.num_moves;
-    printf("\nNumber of move legal moves before: %d\n", initial_position.num_moves);
-    m = initial_position.moves[chosen_move];
-    printf("%s\n", "Chosen Move: ");
-    print_move (&m,&initial_position);
-    printf("Fifty Move Clock: %f\n", initial_position.half_move_clock);
-    printf("Full Move Clock: %d\n", initial_position.full_move_number);
-    print_position (&initial_position);
+  while (initial_position.game_ended == FALSE) {
+    printf("\n\nPosition Value: %f\n", initial_position.position_value);
+    printf("Full move clock: %d\n", initial_position.full_move_number);
+    print_position(&initial_position);
     printf("%s\n", "");
+
+    m = initial_position.moves[rand () % initial_position.num_moves];
     make_move(&initial_position, &m);
+    printf("\nLast Move: %s", "");
+    print_move(&m, &initial_position);
     printf("%s\n", "");
-  }
+  }*/
 
   return 0;
 }

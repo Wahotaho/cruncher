@@ -1,6 +1,6 @@
 #define KING_VAL 100000.0
 #define QUEEN_VAL 9.0
-#define BISHOP_VAL 3.2
+#define BISHOP_VAL 3.25 //3.25
 #define KNIGHT_VAL 3.0
 #define ROOK_VAL 5.0
 #define PAWN_VAL 1.0

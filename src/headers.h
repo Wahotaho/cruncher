@@ -34,6 +34,12 @@ struct move {
 };
 //
 
+// Function definitions for "calculate.h"
+void go_infinite (struct position p);
+void build_tree (int horizon);
+void create_child_nodes (struct node  * n);
+//
+
 // Function definitions for "board.h"
 void load_board (struct position * pos);
 void parse_rank (char * rank, char * pieces);
@@ -41,6 +47,8 @@ void parse_rank (char * rank, char * pieces);
 
 // Function definitions "position.h"
 struct position position_init (char * str, char side, char * castling_options, char * en_passant, double half_moves, int full_moves);
+int white_king_checked (struct position * pos, char rank, char file);
+int black_king_checked (struct position * pos, char rank, char file);
 void print_position (struct position * pos) ;
 //
 
@@ -66,16 +74,25 @@ void white_pawn_moves (struct position * p, char rank, char file);
 void black_pawn_moves (struct position * p, char rank, char file);
 void white_king_moves (struct position * p, char rank, char file);
 void black_king_moves (struct position * p, char rank, char file);
+void white_kingside_castle (struct position * p);
+void black_kingside_castle (struct position * p);
+void white_queenside_castle (struct position * p);
+void black_queenside_castle (struct position * p);
 //
 
 // Function definitions for "misc.h"
 void split (char * array[], char * buf, char * splitter);
 _Bool string_contains (char * str, char s);
 int abs (int a);
+double abs_double (double a);
 char toUpper (char c);
 char toLower (char c);
 //
 
 // Function definitions for "evaluate.h"
 void evaluate_position (struct position * p);
+//
+
+// Function definitions for "game_nodes.h"
+struct node create_node (struct position p);
 //

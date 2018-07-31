@@ -6,7 +6,9 @@ void load_board (struct position * pos) {
 
   split (pos_array, pos->position_string, "/");
 
-  for (int i = 0; i < LEN; i++) {
+  int i;
+
+  for (i = 0; i < LEN; i++) {
     parse_rank(pos -> board[i], pos_array[i]);
   }
 

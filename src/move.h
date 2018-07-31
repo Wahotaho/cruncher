@@ -26,6 +26,7 @@ struct move move_init (int f1, int r1, int f2, int r2, char p, _Bool ep) {
   mov.end_file = f2;
   mov.promotion_piece = p;
   mov.is_en_passant = ep;
+  mov.is_castling = FALSE;
   return mov;
 }
 
@@ -167,6 +168,8 @@ void legal_moves (struct position * p) {
   p -> moves = malloc(sizeof(struct move) * POSSIBLE_MOVES);
 
   if (p -> side_move == 'w') {
+    white_kingside_castle (p);
+    white_queenside_castle (p);
     for (i = 0; i < LEN; i++) {
         for (j = 0; j < WID; j++) {
           if (p -> board[i][j] == 'K') {
@@ -186,9 +189,10 @@ void legal_moves (struct position * p) {
         }
     }
   } else {
+    black_kingside_castle (p);
+    black_queenside_castle (p);
     for (i = 0; i < LEN; i++) {
         for (j = 0; j < WID; j++) {
-
           if (p -> board[i][j] == 'k') {
             black_king_moves (p, i, j);
           } else if (p -> board[i][j] == 'q') {
@@ -208,11 +212,6 @@ void legal_moves (struct position * p) {
   }
 
   if (p -> num_moves == 0) p -> game_ended = TRUE;
-
-  for (int i = 0; i < p -> num_moves; i++) {
-    print_move(&p -> moves[i],p);
-    printf(" ");
-  }
 }
 //
 
@@ -960,4 +959,96 @@ void black_king_moves (struct position * p, char rank, char file) {
       p -> num_moves++;
     }
   }
+}
+
+void white_kingside_castle (struct position * p) {
+  if (!(p -> white_can_castle_kingside)) return;
+  if (!(p -> board[7][5] == '_') || !(p -> board[7][6] == '_')) return;
+
+  if (white_king_checked(p, 7, 4)) return;
+
+  p->board[7][4] = '_';
+  p->board[7][5] = 'K';
+
+  if (white_king_checked(p, 7, 5)) {
+    p->board[7][4] = 'K';
+    p->board[7][5] = '_';
+    return;
+  }
+
+  p->board[7][4] = 'K';
+  p->board[7][5] = '_';
+
+  p -> moves[p -> num_moves] = move_init(4, 7, 6, 7, 'K', FALSE);
+  p -> moves[p -> num_moves].is_castling = TRUE;
+  p -> num_moves++;
+}
+
+void black_kingside_castle (struct position * p) {
+  if (!(p -> black_can_castle_kingside)) return;
+  if (!(p -> board[0][5] == '_') || !(p -> board[0][6] == '_')) return;
+
+  if (black_king_checked(p, 0, 4)) return;
+
+  p->board[0][4] = '_';
+  p->board[0][5] = 'k';
+
+  if (black_king_checked(p, 0, 5)) {
+    p->board[0][4] = 'k';
+    p->board[0][5] = '_';
+    return;
+  }
+
+    p->board[0][4] = 'k';
+    p->board[0][5] = '_';
+
+  p -> moves[p -> num_moves] = move_init(4, 0, 6, 0, 'k', FALSE);
+  p -> moves[p -> num_moves].is_castling = TRUE;
+  p -> num_moves++;
+}
+
+void white_queenside_castle (struct position * p) {
+  if (!(p -> white_can_castle_queenside)) return;
+  if (!(p -> board[7][3] == '_') || !(p -> board[7][2] == '_') || !(p -> board[7][1] == '_')) return;
+
+  if (white_king_checked(p, 7, 4)) return;
+
+  p->board[7][4] = '_';
+  p->board[7][3] = 'K';
+
+  if (white_king_checked(p, 7, 3)) {
+    p->board[7][4] = 'K';
+    p->board[7][3] = '_';
+    return;
+  }
+
+  p->board[7][4] = 'K';
+  p->board[7][3] = '_';
+
+  p -> moves[p -> num_moves] = move_init(4, 7, 2, 7, 'K', FALSE);
+  p -> moves[p -> num_moves].is_castling = TRUE;
+  p -> num_moves++;
+}
+
+void black_queenside_castle (struct position * p) {
+  if (!(p -> black_can_castle_queenside)) return;
+  if (!(p -> board[0][3] == '_') || !(p -> board[0][2] == '_') || !(p -> board[0][1] == '_')) return;
+
+  if (black_king_checked(p, 0, 4)) return;
+
+  p->board[0][4] = '_';
+  p->board[0][3] = 'k';
+
+  if (black_king_checked(p, 0, 3)) {
+    p->board[0][4] = 'k';
+    p->board[0][3] = '_';
+    return;
+  }
+
+  p->board[0][4] = 'k';
+  p->board[0][3] = '_';
+
+  p -> moves[p -> num_moves] = move_init(4, 0, 2, 0, 'k', FALSE);
+  p -> moves[p -> num_moves].is_castling = TRUE;
+  p -> num_moves++;
 }

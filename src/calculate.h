@@ -12,10 +12,11 @@ void build_tree (int horizon) {
   }
 
   //struct node * n = &heads[1];
-  //while (1==1) {
-//    print_position(&n->pos);
+  //do {
+  //  print_position(&n->pos);
   //  n = n->neighbor;
-  //}
+  //} while (n->neighbor != NULL);
+  //print_position(&n->pos);
 }
 
 void create_child_nodes (struct node  * n) {
@@ -33,6 +34,7 @@ void create_child_nodes (struct node  * n) {
 
   if (heads[depth].neighbor == NULL) {
     heads[depth] = n -> children[0];
+    heads[depth].neighbor = &n -> children[1];
   }
 
   int i;
@@ -47,10 +49,5 @@ void create_child_nodes (struct node  * n) {
     n -> children[i].depth = depth;
   }
 
-  tails[depth] = n -> children[i];
-
-  for (int i = 0; i < max_moves; i++) {
-    print_position(&n -> children[i].pos);
-    printf("%d\n",  n -> children[i].depth);
-  }
+  tails[depth] = n -> children[max_moves - 1];
 }

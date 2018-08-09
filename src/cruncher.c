@@ -25,9 +25,10 @@ double initial_half_move_clock;
 int initial_full_move_number;
 int levels_deep = 0;
 
-struct node root;
-struct node * heads;
-struct node * tails;
+struct node * root;
+size_t node_pointer_size = sizeof (root);
+struct node ** heads;
+struct node ** tails;
 int initial_calculating_depth;
 
 // Header files
@@ -62,12 +63,12 @@ int main (int argc, char * argv[]) {
 
   // Initialize head a tail lists
 
-  heads = malloc(sizeof(struct node) * MAX_GAME_LEN);
-  tails = malloc(sizeof(struct node) * MAX_GAME_LEN);
+  heads = malloc(sizeof(&root) * MAX_GAME_LEN);
+  tails = malloc(sizeof(&root) * MAX_GAME_LEN);
 
   for (int i = 0; i < MAX_GAME_LEN; i++) {
-    heads[i].neighbor = NULL;
-    tails[i].neighbor = NULL;
+    heads[i] = NULL;
+    tails[i] = NULL;
   }
 
   // Create initial position struct

@@ -36,7 +36,6 @@ struct move {
 
 // Function definitions for "calculate.h"
 void go_infinite (struct position p);
-void build_tree (int horizon);
 void create_child_nodes (struct node  * n);
 //
 
@@ -94,5 +93,5 @@ void evaluate_position (struct position * p);
 //
 
 // Function definitions for "game_nodes.h"
-struct node create_node (struct position p);
+struct node * create_node (struct position p);
 //

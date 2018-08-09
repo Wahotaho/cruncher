@@ -1,18 +1,28 @@
 void go_infinite (struct position p) {
   root = create_node(p);
-  int horizon = 4;
+  int horizon = 3;
 
   heads[0] = root;
   struct node * n;
 
-  int i = 0;
+  n = heads[0];
+  legal_moves (&n -> pos);
+  create_child_nodes (n);
+
+  int i = 1;
+  int j = 0;
 
   for (; i < horizon; i++) {
     n = heads[i];
     while (n != NULL) {
-      legal_moves (&n -> pos);
-      create_child_nodes (n);
+      while (j < n -> ancestor -> pos.num_moves) {
+        n = n -> ancestor -> children[j];
+        legal_moves (&n -> pos);
+        create_child_nodes (n);
+        j++;
+      }
       n = n -> neighbor;
+      j = 0;
     }
   }
 
@@ -57,5 +67,4 @@ void create_child_nodes (struct node  * n) {
   }
 
   tails[n -> children[0] -> depth] = n -> children[n -> pos.num_moves - 1];
-
 }

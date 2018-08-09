@@ -83,47 +83,47 @@ void make_move (struct position * pos, struct move * mov) {
     if (mov -> end_rank == 7 && mov -> end_file == 6) { // white king side castling
       pos -> board [7][7] = '_';
       pos -> board [7][5] = 'R';
-      pos -> white_can_castle_kingside =0;
-      pos -> white_can_castle_queenside =0;
+      pos -> white_can_castle_kingside = FALSE;
+      pos -> white_can_castle_queenside = FALSE;
     } else if (mov -> end_rank == 7 && mov -> end_file == 2) { // white queen side castling
       pos -> board [7][0] = '_';
       pos -> board [7][3] = 'R';
-      pos -> white_can_castle_kingside =0;
-      pos -> white_can_castle_queenside =0;
+      pos -> white_can_castle_kingside = FALSE;
+      pos -> white_can_castle_queenside = FALSE;
     } else if (mov -> end_rank == 0 && mov -> end_file == 6) { // black king side castling
       pos -> board [0][7] = '_';
       pos -> board [0][5] = 'r';
-      pos -> black_can_castle_kingside =0;
-      pos -> black_can_castle_queenside =0;
+      pos -> black_can_castle_kingside = FALSE;
+      pos -> black_can_castle_queenside = FALSE;
     } else {                                                                          // black queen side castling
       pos -> board [0][0] = '_';
       pos -> board [0][3] = 'r';
-      pos -> black_can_castle_kingside =0;
-      pos -> black_can_castle_queenside =0;
+      pos -> black_can_castle_kingside = FALSE;
+      pos -> black_can_castle_queenside = FALSE;
     }
   }
 
   // Check Kings and Rooks to see if castling option exists
 
   if (pos -> board [7][4] != 'K') {
-    pos -> white_can_castle_kingside =0;
-    pos -> white_can_castle_queenside =0;
+    pos -> white_can_castle_kingside = FALSE;
+    pos -> white_can_castle_queenside = FALSE;
   } else {
     if (pos -> board [7][7] != 'R') {
-      pos -> white_can_castle_kingside =0;
+      pos -> white_can_castle_kingside = FALSE;
     } if (pos -> board [7][0] != 'R') {
-      pos -> white_can_castle_queenside =0;
+      pos -> white_can_castle_queenside = FALSE;
     }
 }
 
   if (pos -> board [0][4] != 'k'){
-    pos -> black_can_castle_kingside =0;
-    pos -> black_can_castle_queenside =0;
+    pos -> black_can_castle_kingside = FALSE;
+    pos -> black_can_castle_queenside = FALSE;
   } else {
     if (pos -> board [0][7] != 'r') {
-      pos -> black_can_castle_kingside =0;
+      pos -> black_can_castle_kingside = FALSE;
     } if (pos -> board [0][0] != 'r') {
-      pos -> black_can_castle_queenside =0;
+      pos -> black_can_castle_queenside = FALSE;
     }
 }
 
@@ -154,7 +154,8 @@ void make_move (struct position * pos, struct move * mov) {
     pos -> full_move_number += 1;
   }
 
-  legal_moves(pos);
+  //legal_moves(pos);
+  evaluate_position(pos);
 }
 //
 

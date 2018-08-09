@@ -36,7 +36,7 @@ struct position position_init (char * str, char side, char * castling_options, c
   evaluate_position(&pos);
   if (abs_double(pos.position_value) > CHECKMATE_VAL) pos.game_ended = TRUE;
 
-  legal_moves (&pos);
+  //legal_moves (&pos);
 
   return pos;
 }

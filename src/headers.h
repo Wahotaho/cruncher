@@ -14,11 +14,14 @@ struct position {
   // Advanced position elements
   _Bool game_ended;
   double position_value;
+  double material_value;
+  double mobility_value;
   int en_passant_rank;
   int en_passant_file;
 
   struct move * moves;
   int num_moves;
+  int previous_num_moves;
 };
 //
 
@@ -37,6 +40,9 @@ struct move {
 // Function definitions for "calculate.h"
 void go_infinite (struct position p);
 void create_child_nodes (struct node  * n);
+double max (struct node * n);
+double min (struct node * n);
+void calculate_next_ply (int i);
 //
 
 // Function definitions for "board.h"

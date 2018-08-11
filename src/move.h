@@ -154,7 +154,9 @@ void make_move (struct position * pos, struct move * mov) {
     pos -> full_move_number += 1;
   }
 
-  //legal_moves(pos);
+  int temp = pos->num_moves;
+  pos->previous_num_moves = temp;
+  legal_moves(pos);
   evaluate_position(pos);
 }
 //

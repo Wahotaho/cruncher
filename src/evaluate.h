@@ -5,6 +5,7 @@
 #define ROOK_VAL 5.0
 #define PAWN_VAL 1.0
 
+double move_weight = .01;
 
 void evaluate_position (struct position * p) {
 
@@ -13,30 +14,42 @@ void evaluate_position (struct position * p) {
   for (i = 0; i < LEN; i++) {
     for (j = 0; j < WID; j++) {
       if (p -> board[i][j] == 'K') {
-        p -> position_value += KING_VAL;
+        p -> material_value += KING_VAL;
       } else if (p -> board[i][j] == 'k') {
-        p -> position_value -= KING_VAL;
+        p -> material_value -= KING_VAL;
       } else if (p -> board[i][j] == 'Q') {
-        p -> position_value += QUEEN_VAL;
+        p -> material_value += QUEEN_VAL;
       } else if (p -> board[i][j] == 'q') {
-        p -> position_value -= QUEEN_VAL;
+        p -> material_value -= QUEEN_VAL;
       } else if (p -> board[i][j] == 'B') {
-        p -> position_value += BISHOP_VAL;
+        p -> material_value += BISHOP_VAL;
       } else if (p -> board[i][j] == 'b') {
-        p -> position_value -= BISHOP_VAL;
+        p -> material_value -= BISHOP_VAL;
       } else if (p -> board[i][j] == 'N') {
-        p -> position_value += KNIGHT_VAL;
+        p -> material_value += KNIGHT_VAL;
       } else if (p -> board[i][j] == 'n') {
-        p -> position_value -= KNIGHT_VAL;
+        p -> material_value -= KNIGHT_VAL;
       } else if (p -> board[i][j] == 'R') {
-        p -> position_value += ROOK_VAL;
+        p -> material_value += ROOK_VAL;
       } else if (p -> board[i][j] == 'r') {
-        p -> position_value -= ROOK_VAL;
+        p -> material_value -= ROOK_VAL;
       } else if (p -> board[i][j] == 'P') {
-        p -> position_value += PAWN_VAL;
+        p -> material_value += PAWN_VAL;
       } else if (p -> board[i][j] == 'p') {
-        p -> position_value -= PAWN_VAL;
+        p -> material_value -= PAWN_VAL;
       }
     }
   }
+
+  if (p -> side_move == 'w') {
+    p -> mobility_value = move_weight*(p ->num_moves - p ->previous_num_moves);
+    //printf("%f\n", p -> mobility_value);
+    //printf("%s\n", "");
+  } else {
+    p -> mobility_value = move_weight*(p ->previous_num_moves - p ->num_moves);
+    //printf("%f\n", p -> mobility_value);
+    //printf("%s\n", "");
+  }
+
+  p-> position_value = p -> material_value + p -> mobility_value;
 }

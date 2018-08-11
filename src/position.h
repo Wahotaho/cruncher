@@ -32,11 +32,24 @@ struct position position_init (char * str, char side, char * castling_options, c
   pos.half_move_clock = half_moves;
   pos.full_move_number = full_moves;
 
-  // check if king is still there
+  // figure out initial position value
+  legal_moves (&pos);
+
+  struct position other_color = pos;
+
+  if (other_color.side_move == 'w')  other_color.side_move = 'b';
+  else other_color.side_move = 'w';
+
+  legal_moves(&other_color);
+
+  pos.previous_num_moves = pos.previous_num_moves;
+  pos.previous_num_moves = pos.num_moves;
   evaluate_position(&pos);
+
+  // check if king is still there
   if (abs_double(pos.position_value) > CHECKMATE_VAL) pos.game_ended = TRUE;
 
-  //legal_moves (&pos);
+  pos.previous_num_moves = 0;
 
   return pos;
 }

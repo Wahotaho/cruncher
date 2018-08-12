@@ -43,6 +43,8 @@ int initial_calculating_depth;
 #include "game_nodes.h"
 #include "calculate.h"
 
+struct move chosen_move;
+
 int main (int argc, char * argv[]) {
 
   // Test if arguments exists

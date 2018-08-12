@@ -10,6 +10,23 @@ struct position position_init (char * str, char side, char * castling_options, c
   pos.black_can_castle_kingside = string_contains (castling_options, 'k');
   pos.black_can_castle_queenside = string_contains (castling_options, 'q');
 
+  // find Kings
+  pos.white_king_rank = -1;
+  pos.white_king_file = -1;
+  pos.black_king_rank = -1;
+  pos.black_king_file = -1;
+
+  for (int i = 0; i < LEN; i++) {
+    for (int j = 0; j < WID; j++) {
+      if (pos.board[i][j] == 'K') {
+        pos.white_king_rank = i;
+        pos.white_king_file = j;
+      } else if (pos.board[i][j] == 'k') {
+        pos.black_king_rank = i;
+        pos.black_king_file = j;
+      }
+    }
+  }
 
   if (!(pos.board[7][4] == 'K') && !(pos.board[7][7] == 'R')) {
     pos.white_can_castle_kingside = FALSE;
@@ -42,12 +59,15 @@ struct position position_init (char * str, char side, char * castling_options, c
 
   legal_moves(&other_color);
 
-  pos.previous_num_moves = pos.previous_num_moves;
-  pos.previous_num_moves = pos.num_moves;
+  pos.previous_num_moves = other_color.previous_num_moves;
+
   evaluate_position(&pos);
 
   // check if king is still there
-  if (abs_double(pos.position_value) > CHECKMATE_VAL) pos.game_ended = TRUE;
+  if (abs_double(pos.position_value) > CHECKMATE_VAL) {
+    pos.game_ended = TRUE;
+    pos.num_moves = 0;
+  }
 
   pos.previous_num_moves = 0;
 
@@ -69,7 +89,6 @@ void print_position (struct position * pos) {
 }
 
 int white_king_checked (struct position * pos, char rank, char file) {
-
   // Check from pawn
 
   if (rank > 1) {
@@ -184,7 +203,7 @@ int white_king_checked (struct position * pos, char rank, char file) {
   while (working_rank > 0 && working_file + 1 < WID) {
     working_rank--;
     working_file++;
-      if (pos -> board [working_rank][working_file] == 'q' && pos -> board [working_rank][working_file] == 'b') return TRUE;
+      if (pos -> board [working_rank][working_file] == 'q' || pos -> board [working_rank][working_file] == 'b') return TRUE;
       else if (is_white(pos -> board [working_rank][working_file]) || is_black(pos -> board [working_rank][working_file])) break;
     }
 
@@ -196,7 +215,7 @@ int white_king_checked (struct position * pos, char rank, char file) {
     while (working_rank + 1 < LEN && working_file + 1 < WID) {
       working_rank++;
       working_file++;
-      if (pos -> board [working_rank][working_file] == 'q' && pos -> board [working_rank][working_file] == 'b') return TRUE;
+      if (pos -> board [working_rank][working_file] == 'q' || pos -> board [working_rank][working_file] == 'b') return TRUE;
       else if (is_white(pos -> board [working_rank][working_file]) || is_black(pos -> board [working_rank][working_file])) break;
     }
 
@@ -208,7 +227,7 @@ int white_king_checked (struct position * pos, char rank, char file) {
     while (working_rank + 1 < LEN && working_file > 0) {
       working_rank++;
       working_file--;
-      if (pos -> board [working_rank][working_file] == 'q' && pos -> board [working_rank][working_file] == 'b') return TRUE;
+      if (pos -> board [working_rank][working_file] == 'q' || pos -> board [working_rank][working_file] == 'b') return TRUE;
       else if (is_white(pos -> board [working_rank][working_file]) || is_black(pos -> board [working_rank][working_file])) break;
     }
 
@@ -220,7 +239,7 @@ int white_king_checked (struct position * pos, char rank, char file) {
   while (working_rank > 0 && working_file > 0) {
     working_rank--;
     working_file--;
-      if (pos -> board [working_rank][working_file] == 'q' && pos -> board [working_rank][working_file] == 'b') return TRUE;
+      if (pos -> board [working_rank][working_file] == 'q' || pos -> board [working_rank][working_file] == 'b') return TRUE;
       else if (is_white(pos -> board [working_rank][working_file]) || is_black(pos -> board [working_rank][working_file])) break;
   }
 
@@ -232,7 +251,7 @@ int white_king_checked (struct position * pos, char rank, char file) {
 
 while (working_rank > 0) {
   working_rank--;
-  if (pos -> board [working_rank][working_file] == 'q' && pos -> board [working_rank][working_file] == 'r') return TRUE;
+  if (pos -> board [working_rank][working_file] == 'q' || pos -> board [working_rank][working_file] == 'r') return TRUE;
   else if (is_white(pos -> board [working_rank][working_file]) || is_black(pos -> board [working_rank][working_file])) break;
 }
 
@@ -242,7 +261,7 @@ working_rank = rank;
 
 while (working_rank + 1 < LEN) {
   working_rank++;
-  if (pos -> board [working_rank][working_file] == 'q' && pos -> board [working_rank][working_file] == 'r') return TRUE;
+  if (pos -> board [working_rank][working_file] == 'q' || pos -> board [working_rank][working_file] == 'r') return TRUE;
   else if (is_white(pos -> board [working_rank][working_file]) || is_black(pos -> board [working_rank][working_file])) break;
 }
 
@@ -252,7 +271,7 @@ working_rank = rank;
 
 while (working_file > 0) {
   working_file--;
-  if (pos -> board [working_rank][working_file] == 'q' && pos -> board [working_rank][working_file] == 'r') return TRUE;
+  if (pos -> board [working_rank][working_file] == 'q' || pos -> board [working_rank][working_file] == 'r') return TRUE;
   else if (is_white(pos -> board [working_rank][working_file]) || is_black(pos -> board [working_rank][working_file])) break;
 }
 
@@ -262,7 +281,8 @@ working_file = file;
 
 while (working_file + 1< WID) {
   working_file++;
-  if (pos -> board [working_rank][working_file] == 'q' && pos -> board [working_rank][working_file] == 'r') return TRUE;
+  if (pos -> board [working_rank][working_file] == 'q' ||
+   pos -> board [working_rank][working_file] == 'r') return TRUE;
   else if (is_white(pos -> board [working_rank][working_file]) || is_black(pos -> board [working_rank][working_file])) break;
 }
 
@@ -385,7 +405,7 @@ int black_king_checked (struct position * pos, char rank, char file) {
   while (working_rank > 0 && working_file + 1 < WID) {
     working_rank--;
     working_file++;
-      if (pos -> board [working_rank][working_file] == 'Q' && pos -> board [working_rank][working_file] == 'B') return TRUE;
+      if (pos -> board [working_rank][working_file] == 'Q' || pos -> board [working_rank][working_file] == 'B') return TRUE;
       else if (is_white(pos -> board [working_rank][working_file]) || is_black(pos -> board [working_rank][working_file])) break;
     }
 
@@ -397,7 +417,7 @@ int black_king_checked (struct position * pos, char rank, char file) {
     while (working_rank + 1 < LEN && working_file + 1 < WID) {
       working_rank++;
       working_file++;
-      if (pos -> board [working_rank][working_file] == 'Q' && pos -> board [working_rank][working_file] == 'B') return TRUE;
+      if (pos -> board [working_rank][working_file] == 'Q' || pos -> board [working_rank][working_file] == 'B') return TRUE;
       else if (is_white(pos -> board [working_rank][working_file]) || is_black(pos -> board [working_rank][working_file])) break;
     }
 
@@ -409,7 +429,7 @@ int black_king_checked (struct position * pos, char rank, char file) {
     while (working_rank + 1 < LEN && working_file > 0) {
       working_rank++;
       working_file--;
-      if (pos -> board [working_rank][working_file] == 'Q' && pos -> board [working_rank][working_file] == 'B') return TRUE;
+      if (pos -> board [working_rank][working_file] == 'Q' || pos -> board [working_rank][working_file] == 'B') return TRUE;
       else if (is_white(pos -> board [working_rank][working_file]) || is_black(pos -> board [working_rank][working_file])) break;
     }
 
@@ -421,7 +441,7 @@ int black_king_checked (struct position * pos, char rank, char file) {
   while (working_rank > 0 && working_file > 0) {
     working_rank--;
     working_file--;
-      if (pos -> board [working_rank][working_file] == 'Q' && pos -> board [working_rank][working_file] == 'B') return TRUE;
+      if (pos -> board [working_rank][working_file] == 'Q' || pos -> board [working_rank][working_file] == 'B') return TRUE;
       else if (is_white(pos -> board [working_rank][working_file]) || is_black(pos -> board [working_rank][working_file])) break;
   }
 
@@ -433,7 +453,7 @@ int black_king_checked (struct position * pos, char rank, char file) {
 
 while (working_rank > 0) {
   working_rank--;
-  if (pos -> board [working_rank][working_file] == 'Q' && pos -> board [working_rank][working_file] == 'R') return TRUE;
+  if (pos -> board [working_rank][working_file] == 'Q' || pos -> board [working_rank][working_file] == 'R') return TRUE;
   else if (is_white(pos -> board [working_rank][working_file]) || is_black(pos -> board [working_rank][working_file])) break;
 }
 
@@ -443,7 +463,7 @@ working_rank = rank;
 
 while (working_rank + 1 < LEN) {
   working_rank++;
-  if (pos -> board [working_rank][working_file] == 'Q' && pos -> board [working_rank][working_file] == 'R') return TRUE;
+  if (pos -> board [working_rank][working_file] == 'Q' || pos -> board [working_rank][working_file] == 'R') return TRUE;
   else if (is_white(pos -> board [working_rank][working_file]) || is_black(pos -> board [working_rank][working_file])) break;
 }
 
@@ -453,7 +473,7 @@ working_rank = rank;
 
 while (working_file > 0) {
   working_file--;
-  if (pos -> board [working_rank][working_file] == 'Q' && pos -> board [working_rank][working_file] == 'R') return TRUE;
+  if (pos -> board [working_rank][working_file] == 'Q' || pos -> board [working_rank][working_file] == 'R') return TRUE;
   else if (is_white(pos -> board [working_rank][working_file]) || is_black(pos -> board [working_rank][working_file])) break;
 }
 
@@ -463,7 +483,7 @@ working_file = file;
 
 while (working_file + 1< WID) {
   working_file++;
-  if (pos -> board [working_rank][working_file] == 'Q' && pos -> board [working_rank][working_file] == 'R') return TRUE;
+  if (pos -> board [working_rank][working_file] == 'Q' || pos -> board [working_rank][working_file] == 'R') return TRUE;
   else if (is_white(pos -> board [working_rank][working_file]) || is_black(pos -> board [working_rank][working_file])) break;
 }
 

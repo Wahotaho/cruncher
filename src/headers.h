@@ -11,6 +11,12 @@ struct position {
   int full_move_number;
   char board[WID][LEN];
 
+    // King locations
+    int white_king_rank;
+    int white_king_file;
+    int black_king_rank;
+    int black_king_file;
+
   // Advanced position elements
   _Bool game_ended;
   double position_value;
@@ -43,6 +49,7 @@ void create_child_nodes (struct node  * n);
 double max (struct node * n);
 double min (struct node * n);
 void calculate_next_ply (int i);
+void calculate_depth_minimax_val (struct node * n);
 //
 
 // Function definitions for "board.h"
@@ -67,6 +74,7 @@ int is_black (char p);
 struct move move_init_from_string (char * move_str);
 struct move move_init_f (int f1, int r1, int f2, int r2, char p, _Bool ep);
 void make_move (struct position * pos, struct move * mov);
+void place_move (struct position * pos, struct move * mov);
 void print_move (struct move * m, struct position * p);
 void legal_moves (struct position * p);
 void white_rook_moves (struct position * p, char rank, char file);

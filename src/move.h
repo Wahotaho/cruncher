@@ -75,7 +75,7 @@ void make_move (struct position * pos, struct move * mov) {
   pos -> board [mov -> start_rank][mov -> start_file] = '_';
 
   if (mov -> is_en_passant) {
-    if (pos -> side_move == 'w') pos -> board [mov -> end_rank + 1][mov -> end_file] = '_';
+    if (pos -> side_move == 'w') pos -> board [mov -> end_rank - 1][mov -> end_file] = '_';
     else pos -> board [mov -> end_rank - 1][mov -> end_file] = '_';
   }
 
@@ -154,6 +154,16 @@ void make_move (struct position * pos, struct move * mov) {
     pos -> full_move_number += 1;
   }
 
+
+  // Update king position
+  if (pos -> board[mov -> end_rank][mov -> end_file] == 'K') {
+    pos ->white_king_rank = mov -> end_rank;
+    pos ->white_king_rank = mov -> end_file;
+  } else if (pos -> board[mov -> end_rank][mov -> end_file] == 'k') {
+    pos ->black_king_rank = mov -> end_rank;
+    pos ->black_king_rank = mov -> end_file;
+  }
+
   int temp = pos->num_moves;
   pos->previous_num_moves = temp;
   legal_moves(pos);
@@ -219,6 +229,8 @@ void legal_moves (struct position * p) {
 //
 
 void white_rook_moves (struct position * p, char rank, char file) {
+  struct move m;
+  struct position test_check;
   int working_rank = rank;
   int working_file = file;
 
@@ -231,11 +243,14 @@ void white_rook_moves (struct position * p, char rank, char file) {
 
     if (is_white(p -> board [working_rank][working_file])) break;
 
-      p -> moves[p -> num_moves] = move_init(file, rank, working_file, working_rank, promotion_piece, 0);
-      //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-      //printf("%s\n", "");
+    m = move_init(file, rank, working_file,working_rank, promotion_piece, FALSE);
+    memcpy(test_check.board, p->board, sizeof(test_check.board));
+    place_move (&test_check, &m);
+    if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
 
+      p -> moves[p -> num_moves] = m;
       p -> num_moves++;
+    }
 
       if (is_black(p -> board [working_rank][working_file])) break;
   }
@@ -249,10 +264,14 @@ void white_rook_moves (struct position * p, char rank, char file) {
 
     if (is_white(p -> board [working_rank][working_file])) break;
 
-      p -> moves[p -> num_moves] = move_init(file, rank, working_file, working_rank, promotion_piece, 0);
-      //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-      //printf("%s\n", "");
+    m = move_init(file, rank, working_file,working_rank, promotion_piece, FALSE);
+    memcpy(test_check.board, p->board, sizeof(test_check.board));
+    place_move (&test_check, &m);
+    if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+      p -> moves[p -> num_moves] = m;
       p -> num_moves++;
+    }
       if (is_black(p -> board [working_rank][working_file])) break;
   }
 
@@ -265,10 +284,14 @@ void white_rook_moves (struct position * p, char rank, char file) {
 
     if (is_white(p -> board [working_rank][working_file])) break;
 
-      p -> moves[p -> num_moves] = move_init(file, rank, working_file, working_rank, promotion_piece, 0);
-      //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-      //printf("%s\n", "");
+    m = move_init(file, rank, working_file,working_rank, promotion_piece, FALSE);
+    memcpy(test_check.board, p->board, sizeof(test_check.board));
+    place_move (&test_check, &m);
+    if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+      p -> moves[p -> num_moves] = m;
       p -> num_moves++;
+    }
       if (is_black(p -> board [working_rank][working_file])) break;
   }
 
@@ -281,10 +304,14 @@ void white_rook_moves (struct position * p, char rank, char file) {
 
     if (is_white(p -> board [working_rank][working_file])) break;
 
-      p -> moves[p -> num_moves] = move_init(file, rank, working_file, working_rank, promotion_piece, 0);
-      //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-      //printf("%s\n", "");
+    m = move_init(file, rank, working_file,working_rank, promotion_piece, FALSE);
+    memcpy(test_check.board, p->board, sizeof(test_check.board));
+    place_move (&test_check, &m);
+    if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+      p -> moves[p -> num_moves] = m;
       p -> num_moves++;
+    }
       if (is_black(p -> board [working_rank][working_file])) break;
   }
 }
@@ -293,6 +320,9 @@ void black_rook_moves (struct position * p, char rank, char file) {
   int working_rank = rank;
   int working_file = file;
 
+  struct move m;
+  struct position test_check;
+
   char promotion_piece = p -> board [working_rank][working_file];
 
     // UP
@@ -302,10 +332,14 @@ void black_rook_moves (struct position * p, char rank, char file) {
 
     if (is_black(p -> board [working_rank][working_file])) break;
 
-      p -> moves[p -> num_moves] = move_init(file, rank, working_file, working_rank, promotion_piece, 0);
-      //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-      //printf("%s\n", "");
+    m = move_init(file, rank, working_file,working_rank, promotion_piece, FALSE);
+    memcpy(test_check.board, p->board, sizeof(test_check.board));
+    place_move (&test_check, &m);
+    if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+      p -> moves[p -> num_moves] = m;
       p -> num_moves++;
+    }
       if (is_white(p -> board [working_rank][working_file])) break;
   }
 
@@ -318,10 +352,14 @@ void black_rook_moves (struct position * p, char rank, char file) {
 
     if (is_black(p -> board [working_rank][working_file])) break;
 
-      p -> moves[p -> num_moves] = move_init(file, rank, working_file, working_rank, promotion_piece, 0);
-      //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-      //printf("%s\n", "");
+    m = move_init(file, rank, working_file,working_rank, promotion_piece, FALSE);
+    memcpy(test_check.board, p->board, sizeof(test_check.board));
+    place_move (&test_check, &m);
+    if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+      p -> moves[p -> num_moves] = m;
       p -> num_moves++;
+    }
       if (is_white(p -> board [working_rank][working_file])) break;
   }
 
@@ -334,10 +372,14 @@ void black_rook_moves (struct position * p, char rank, char file) {
 
     if (is_black(p -> board [working_rank][working_file])) break;
 
-      p -> moves[p -> num_moves] = move_init(file, rank, working_file, working_rank, promotion_piece, 0);
-      //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-      //printf("%s\n", "");
+    m = move_init(file, rank, working_file,working_rank, promotion_piece, FALSE);
+    memcpy(test_check.board, p->board, sizeof(test_check.board));
+    place_move (&test_check, &m);
+    if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+      p -> moves[p -> num_moves] = m;
       p -> num_moves++;
+    }
       if (is_white(p -> board [working_rank][working_file])) break;
   }
 
@@ -350,10 +392,14 @@ void black_rook_moves (struct position * p, char rank, char file) {
 
     if (is_black(p -> board [working_rank][working_file])) break;
 
-      p -> moves[p -> num_moves] = move_init(file, rank, working_file, working_rank, promotion_piece, 0);
-      //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-      //printf("%s\n", "");
+    m = move_init(file, rank, working_file,working_rank, promotion_piece, FALSE);
+    memcpy(test_check.board, p->board, sizeof(test_check.board));
+    place_move (&test_check, &m);
+    if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+      p -> moves[p -> num_moves] = m;
       p -> num_moves++;
+    }
       if (is_white(p -> board [working_rank][working_file])) break;
   }
 }
@@ -361,6 +407,9 @@ void black_rook_moves (struct position * p, char rank, char file) {
 // BISHOP MOVES
 
 void white_bishop_moves (struct position * p, char rank, char file) {
+  struct move m;
+  struct position test_check;
+
   int working_rank = rank;
   int working_file = file;
 
@@ -374,10 +423,14 @@ void white_bishop_moves (struct position * p, char rank, char file) {
 
     if (is_white(p -> board [working_rank][working_file])) break;
 
-      p -> moves[p -> num_moves] = move_init(file, rank, working_file, working_rank, promotion_piece, 0);
-      //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-      //printf("%s\n", "");
+    m = move_init(file, rank, working_file,working_rank, promotion_piece, FALSE);
+    memcpy(test_check.board, p->board, sizeof(test_check.board));
+    place_move (&test_check, &m);
+    if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+      p -> moves[p -> num_moves] = m;
       p -> num_moves++;
+    }
       if (is_black(p -> board [working_rank][working_file])) break;
   }
 
@@ -392,10 +445,14 @@ while (working_rank > 0 && working_file + 1 < WID) {
 
   if (is_white(p -> board [working_rank][working_file])) break;
 
-    p -> moves[p -> num_moves] = move_init(file, rank, working_file, working_rank, promotion_piece, 0);
-    //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-    //printf("%s\n", "");
+  m = move_init(file, rank, working_file,working_rank, promotion_piece, FALSE);
+  memcpy(test_check.board, p->board, sizeof(test_check.board));
+  place_move (&test_check, &m);
+  if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+    p -> moves[p -> num_moves] = m;
     p -> num_moves++;
+  }
     if (is_black(p -> board [working_rank][working_file])) break;
 }
 
@@ -410,10 +467,14 @@ working_file++;
 
 if (is_white(p -> board [working_rank][working_file])) break;
 
-  p -> moves[p -> num_moves] = move_init(file, rank, working_file, working_rank, promotion_piece, 0);
-  //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-  //printf("%s\n", "");
+m = move_init(file, rank, working_file,working_rank, promotion_piece, FALSE);
+memcpy(test_check.board, p->board, sizeof(test_check.board));
+place_move (&test_check, &m);
+if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+  p -> moves[p -> num_moves] = m;
   p -> num_moves++;
+}
   if (is_black(p -> board [working_rank][working_file])) break;
 }
 
@@ -428,15 +489,23 @@ if (is_white(p -> board [working_rank][working_file])) break;
 
   if (is_white(p -> board [working_rank][working_file])) break;
 
-    p -> moves[p -> num_moves] = move_init(file, rank, working_file, working_rank, promotion_piece, 0);
-    //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-    //printf("%s\n", "");
+  m = move_init(file, rank, working_file,working_rank, promotion_piece, FALSE);
+  memcpy(test_check.board, p->board, sizeof(test_check.board));
+  place_move (&test_check, &m);
+  if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+    p -> moves[p -> num_moves] = m;
     p -> num_moves++;
+  }
     if (is_black(p -> board [working_rank][working_file])) break;
   }
 }
 
 void black_bishop_moves (struct position * p, char rank, char file) {
+
+  struct move m;
+  struct position test_check;
+
   int working_rank = rank;
   int working_file = file;
 
@@ -450,10 +519,14 @@ void black_bishop_moves (struct position * p, char rank, char file) {
 
     if (is_black(p -> board [working_rank][working_file])) break;
 
-      p -> moves[p -> num_moves] = move_init(file, rank, working_file, working_rank, promotion_piece, 0);
-      //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-      //printf("%s\n", "");
+    m = move_init(file, rank, working_file,working_rank, promotion_piece, FALSE);
+    memcpy(test_check.board, p->board, sizeof(test_check.board));
+    place_move (&test_check, &m);
+    if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+      p -> moves[p -> num_moves] = m;
       p -> num_moves++;
+    }
       if (is_white(p -> board [working_rank][working_file])) break;
   }
 
@@ -468,10 +541,14 @@ while (working_rank > 0 && working_file + 1 < WID) {
 
   if (is_black(p -> board [working_rank][working_file])) break;
 
-    p -> moves[p -> num_moves] = move_init(file, rank, working_file, working_rank, promotion_piece, 0);
-    //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-    //printf("%s\n", "");
+  m = move_init(file, rank, working_file,working_rank, promotion_piece, FALSE);
+  memcpy(test_check.board, p->board, sizeof(test_check.board));
+  place_move (&test_check, &m);
+  if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+    p -> moves[p -> num_moves] = m;
     p -> num_moves++;
+  }
     if (is_white(p -> board [working_rank][working_file])) break;
 }
 
@@ -486,10 +563,14 @@ working_file++;
 
 if (is_black(p -> board [working_rank][working_file])) break;
 
-  p -> moves[p -> num_moves] = move_init(file, rank, working_file, working_rank, promotion_piece, 0);
-  //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-  //printf("%s\n", "");
+m = move_init(file, rank, working_file,working_rank, promotion_piece, FALSE);
+memcpy(test_check.board, p->board, sizeof(test_check.board));
+place_move (&test_check, &m);
+if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+  p -> moves[p -> num_moves] = m;
   p -> num_moves++;
+}
   if (is_white(p -> board [working_rank][working_file])) break;
 }
 
@@ -504,10 +585,14 @@ if (is_black(p -> board [working_rank][working_file])) break;
 
   if (is_black(p -> board [working_rank][working_file])) break;
 
-    p -> moves[p -> num_moves] = move_init(file, rank, working_file, working_rank, promotion_piece, 0);
-    //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-    //printf("%s\n", "");
+  m = move_init(file, rank, working_file,working_rank, promotion_piece, FALSE);
+  memcpy(test_check.board, p->board, sizeof(test_check.board));
+  place_move (&test_check, &m);
+  if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+    p -> moves[p -> num_moves] = m;
     p -> num_moves++;
+  }
     if (is_white(p -> board [working_rank][working_file])) break;
   }
 }
@@ -515,20 +600,33 @@ if (is_black(p -> board [working_rank][working_file])) break;
 
 void white_knight_moves (struct position * p, char rank, char file) {
 
-  char promotion_piece = 'N';
+  struct move m;
+  struct position test_check;
 
   // UP MOVES
   if (rank - 2 > -1) {
     // LEFT
     if (file - 1 > - 1 && !(is_white(p -> board [rank - 2][file - 1]))) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank - 2, promotion_piece, 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file - 1, rank - 2, 'N', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
 
     // RIGHT
     if (file + 1 < WID && !(is_white(p -> board [rank - 2][file + 1]))) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank - 2, promotion_piece, 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file + 1, rank - 2, 'N', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
   }
 
@@ -536,14 +634,26 @@ void white_knight_moves (struct position * p, char rank, char file) {
   if (rank + 2 < LEN) {
     // LEFT
     if (file - 1 > - 1 && !(is_white(p -> board [rank + 2][file - 1]))) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank + 2, promotion_piece, 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file - 1, rank + 2, 'N', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
 
     // RIGHT
     if (file + 1 < WID && !(is_white(p -> board [rank + 2][file + 1]))) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank + 2, promotion_piece, 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file + 1, rank + 2, 'N', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
   }
 
@@ -551,14 +661,26 @@ void white_knight_moves (struct position * p, char rank, char file) {
   if (file - 2 > -1) {
     // UP
     if (rank - 1 > - 1 && !(is_white(p -> board [rank - 1][file - 2]))) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file - 2, rank - 1, promotion_piece, 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file - 2, rank -1, 'N', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
 
     // DOWN
     if (rank + 1 < LEN && !(is_white(p -> board [rank + 1][file - 2]))) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file - 2, rank + 1, promotion_piece, 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file - 2, rank + 1, 'N', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
   }
 
@@ -566,34 +688,59 @@ void white_knight_moves (struct position * p, char rank, char file) {
   if (file + 2 < WID) {
     // UP
     if (rank - 1 > - 1 && !(is_white(p -> board [rank - 1][file + 2]))) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file + 2, rank - 1, promotion_piece, 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file + 2, rank - 1, 'N', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
 
     // DOWN
     if (rank + 1 < LEN && !(is_white(p -> board [rank + 1][file + 2]))) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file + 2, rank + 1, promotion_piece, 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file + 2, rank + 1, 'N', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
   }
 }
 
 void black_knight_moves (struct position * p, char rank, char file) {
 
-  char promotion_piece = 'n';
+  struct move m;
+  struct position test_check;
 
   // UP MOVES
   if (rank - 2 > -1) {
     // LEFT
     if (file - 1 > - 1 && !(is_black(p -> board [rank - 2][file - 1]))) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank - 2, promotion_piece, 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file - 1, rank - 2, 'n', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
 
     // RIGHT
     if (file + 1 < WID && !(is_black(p -> board [rank - 2][file + 1]))) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank - 2, promotion_piece, 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file + 1, rank - 2, 'n', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
   }
 
@@ -601,14 +748,26 @@ void black_knight_moves (struct position * p, char rank, char file) {
   if (rank + 2 < LEN) {
     // LEFT
     if (file - 1 > - 1 && !(is_black(p -> board [rank + 2][file - 1]))) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank + 2, promotion_piece, 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file - 1, rank + 2, 'n', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      };
     }
 
     // RIGHT
     if (file + 1 < WID && !(is_black(p -> board [rank + 2][file + 1]))) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank + 2, promotion_piece, 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file + 1, rank + 2, 'n', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
   }
 
@@ -616,14 +775,26 @@ void black_knight_moves (struct position * p, char rank, char file) {
   if (file - 2 > -1) {
     // UP
     if (rank - 1 > - 1 && !(is_black(p -> board [rank - 1][file - 2]))) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file - 2, rank - 1, promotion_piece, 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file - 2, rank - 1, 'n', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
 
     // DOWN
     if (rank + 1 < LEN && !(is_black(p -> board [rank + 1][file - 2]))) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file - 2, rank + 1, promotion_piece, 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file - 2, rank + 1, 'n', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
   }
 
@@ -631,40 +802,73 @@ void black_knight_moves (struct position * p, char rank, char file) {
   if (file + 2 < WID) {
     // UP
     if (rank - 1 > - 1 && !(is_black(p -> board [rank - 1][file + 2]))) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file + 2, rank - 1, promotion_piece, 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file + 2, rank - 1, 'n', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
 
     // DOWN
     if (rank + 1 < LEN && !(is_black(p -> board [rank + 1][file + 2]))) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file + 2, rank + 1, promotion_piece, 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file + 2, rank + 1, 'n', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
   }
 }
 
 void white_pawn_moves (struct position * p, char rank, char file) {
+
+  struct move m;
+  struct position test_check;
+
   // One move forward
   if (p -> board [rank - 1][file + 0] == '_') {
     if (rank - 1 != 0) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file , rank - 1, 'P', 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file, rank - 1, 'P', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     } else { // PROMOTION
-      p -> moves[p -> num_moves] = move_init(file, rank, file , rank - 1, 'Q', 0);
-      p -> num_moves++;
-      p -> moves[p -> num_moves] = move_init(file, rank, file , rank - 1, 'B', 0);
-      p -> num_moves++;
-      p -> moves[p -> num_moves] = move_init(file, rank, file , rank - 1, 'N', 0);
-      p -> num_moves++;
-      p -> moves[p -> num_moves] = move_init(file, rank, file , rank - 1, 'R', 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file, rank - 1, 'P', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+        p -> moves[p -> num_moves] = move_init(file, rank, file , rank - 1, 'Q', 0);
+        p -> num_moves++;
+        p -> moves[p -> num_moves] = move_init(file, rank, file , rank - 1, 'B', 0);
+        p -> num_moves++;
+        p -> moves[p -> num_moves] = move_init(file, rank, file , rank - 1, 'N', 0);
+        p -> num_moves++;
+        p -> moves[p -> num_moves] = move_init(file, rank, file , rank - 1, 'R', 0);
+        p -> num_moves++;
+      }
     }
 
     // Two moves forward
     if (rank == WID - 2) {
       if (p -> board [rank - 2][file + 0] == '_') {
-        p -> moves[p -> num_moves] = move_init(file, rank, file , rank - 2, 'P', 0);
-        p -> num_moves++;
+        m = move_init(file, rank, file, rank - 2, 'P', FALSE);
+        memcpy(test_check.board, p->board, sizeof(test_check.board));
+        place_move (&test_check, &m);
+        if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+          p -> moves[p -> num_moves] = m;
+          p -> num_moves++;
+        }
       }
     }
   }
@@ -673,17 +877,28 @@ void white_pawn_moves (struct position * p, char rank, char file) {
     if (file > 0) {
       if (is_black(p -> board [rank - 1][file - 1])) {
         if (rank - 1 != 0) {
-          p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank - 1, 'P', 0);
-          p -> num_moves++;
+          m = move_init(file, rank, file - 1, rank - 1, 'P', FALSE);
+          memcpy(test_check.board, p->board, sizeof(test_check.board));
+          place_move (&test_check, &m);
+          if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+            p -> moves[p -> num_moves] = m;
+            p -> num_moves++;
+          }
         } else {
-          p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank - 1, 'Q', 0);
-          p -> num_moves++;
-          p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank - 1, 'B', 0);
-          p -> num_moves++;
-          p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank - 1, 'N', 0);
-          p -> num_moves++;
-          p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank - 1, 'R', 0);
-          p -> num_moves++;
+          m = move_init(file, rank, file - 1, rank - 1, 'P', FALSE);
+          memcpy(test_check.board, p->board, sizeof(test_check.board));
+          place_move (&test_check, &m);
+          if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+            p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank - 1, 'Q', 0);
+            p -> num_moves++;
+            p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank - 1, 'B', 0);
+            p -> num_moves++;
+            p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank - 1, 'N', 0);
+            p -> num_moves++;
+            p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank - 1, 'R', 0);
+            p -> num_moves++;
+          }
         }
       }
     }
@@ -692,57 +907,100 @@ void white_pawn_moves (struct position * p, char rank, char file) {
     if (file < WID - 1) {
       if (is_black(p -> board [rank - 1][file + 1])) {
         if (rank - 1 != 0) {
-          p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank - 1, 'P', 0);
-          p -> num_moves++;
+          m = move_init(file, rank, file + 1, rank - 1, 'P', FALSE);
+          memcpy(test_check.board, p->board, sizeof(test_check.board));
+          place_move (&test_check, &m);
+          if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+            p -> moves[p -> num_moves] = m;
+            p -> num_moves++;
+          }
         } else {
-          p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank - 1, 'Q', 0);
-          p -> num_moves++;
-          p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank - 1, 'B', 0);
-          p -> num_moves++;
-          p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank - 1, 'N', 0);
-          p -> num_moves++;
-          p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank - 1, 'R', 0);
-          p -> num_moves++;
+          m = move_init(file, rank, file + 1, rank - 1, 'P', FALSE);
+          memcpy(test_check.board, p->board, sizeof(test_check.board));
+          place_move (&test_check, &m);
+          if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+            p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank - 1, 'Q', 0);
+            p -> num_moves++;
+            p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank - 1, 'B', 0);
+            p -> num_moves++;
+            p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank - 1, 'N', 0);
+            p -> num_moves++;
+            p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank - 1, 'R', 0);
+            p -> num_moves++;
+          }
         }
       }
     }
 
     //EN PASSANT left
     if (rank - 1 == p -> en_passant_rank && file - 1 == p -> en_passant_file) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank - 1, 'P', 1);
-      p -> num_moves++;
+      m = move_init(file, rank, file - 1, rank - 1, 'P', TRUE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
 
     //EN PASSANT right
     if (rank - 1 == p -> en_passant_rank && file + 1 == p -> en_passant_file) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank - 1, 'P', 1);
-      p -> num_moves++;
+      m = move_init(file, rank, file + 1, rank - 1, 'P', TRUE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!white_king_checked(&test_check, p->white_king_rank, p->white_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
   }
 
 void black_pawn_moves (struct position * p, char rank, char file) {
 
+  struct move m;
+  struct position test_check;
+
   // One move forward
   if (p -> board [rank + 1][file + 0] == '_') {
     if (rank < LEN - 2) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file , rank + 1, 'p', 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file, rank + 1, 'p', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     } else { // PROMOTION
-      p -> moves[p -> num_moves] = move_init(file, rank, file , rank + 1, 'q', 0);
-      p -> num_moves++;
-      p -> moves[p -> num_moves] = move_init(file, rank, file , rank + 1, 'b', 0);
-      p -> num_moves++;
-      p -> moves[p -> num_moves] = move_init(file, rank, file , rank + 1, 'n', 0);
-      p -> num_moves++;
-      p -> moves[p -> num_moves] = move_init(file, rank, file , rank + 1, 'r', 0);
-      p -> num_moves++;
+      m = move_init(file, rank, file, rank + 1, 'p', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+        p -> moves[p -> num_moves] = move_init(file, rank, file , rank + 1, 'q', 0);
+        p -> num_moves++;
+        p -> moves[p -> num_moves] = move_init(file, rank, file , rank + 1, 'b', 0);
+        p -> num_moves++;
+        p -> moves[p -> num_moves] = move_init(file, rank, file , rank + 1, 'n', 0);
+        p -> num_moves++;
+        p -> moves[p -> num_moves] = move_init(file, rank, file , rank + 1, 'r', 0);
+        p -> num_moves++;
+      }
     }
 
     // Two moves forward
     if (rank == 1) {
       if (p -> board [rank + 2][file + 0] == '_') {
-        p -> moves[p -> num_moves] = move_init(file, rank, file , rank + 2, 'p', 0);
-        p -> num_moves++;
+        m = move_init(file, rank, file, rank + 2, 'p', FALSE);
+        memcpy(test_check.board, p->board, sizeof(test_check.board));
+        place_move (&test_check, &m);
+        if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+          p -> moves[p -> num_moves] = m;
+          p -> num_moves++;
+        }
       }
     }
   }
@@ -750,17 +1008,28 @@ void black_pawn_moves (struct position * p, char rank, char file) {
     if (file > 0) {
       if (is_white(p -> board [rank + 1][file - 1])) {
         if (rank + 2 != WID) {
-          p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank + 1, 'p', 0);
-          p -> num_moves++;
+          m = move_init(file, rank, file - 1, rank + 1, 'p', FALSE);
+          memcpy(test_check.board, p->board, sizeof(test_check.board));
+          place_move (&test_check, &m);
+          if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+            p -> moves[p -> num_moves] = m;
+            p -> num_moves++;
+          }
         } else {
-          p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank + 1, 'q', 0);
-          p -> num_moves++;
-          p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank + 1, 'b', 0);
-          p -> num_moves++;
-          p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank + 1, 'n', 0);
-          p -> num_moves++;
-          p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank + 1, 'r', 0);
-          p -> num_moves++;
+          m = move_init(file, rank, file - 1, rank + 1, 'p', FALSE);
+          memcpy(test_check.board, p->board, sizeof(test_check.board));
+          place_move (&test_check, &m);
+          if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+            p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank + 1, 'q', 0);
+            p -> num_moves++;
+            p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank + 1, 'b', 0);
+            p -> num_moves++;
+            p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank + 1, 'n', 0);
+            p -> num_moves++;
+            p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank + 1, 'r', 0);
+            p -> num_moves++;
+          }
         }
       }
     }
@@ -769,63 +1038,101 @@ void black_pawn_moves (struct position * p, char rank, char file) {
     if (file < WID - 1) {
       if (is_white(p -> board [rank + 1][file + 1])) {
         if (rank != LEN - 2) {
-          p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank + 1, 'p', 0);
-          p -> num_moves++;
+          m = move_init(file, rank, file + 1, rank + 1, 'p', FALSE);
+          memcpy(test_check.board, p->board, sizeof(test_check.board));
+          place_move (&test_check, &m);
+          if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+            p -> moves[p -> num_moves] = m;
+            p -> num_moves++;
+          }
         } else {
-          p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank + 1, 'q', 0);
-          p -> num_moves++;
-          p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank + 1, 'b', 0);
-          p -> num_moves++;
-          p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank + 1, 'n', 0);
-          p -> num_moves++;
-          p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank + 1, 'r', 0);
-          p -> num_moves++;
+          m = move_init(file, rank, file + 1, rank + 1, 'p', FALSE);
+          memcpy(test_check.board, p->board, sizeof(test_check.board));
+          place_move (&test_check, &m);
+          if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+            p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank + 1, 'q', 0);
+            p -> num_moves++;
+            p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank + 1, 'b', 0);
+            p -> num_moves++;
+            p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank + 1, 'n', 0);
+            p -> num_moves++;
+            p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank + 1, 'r', 0);
+            p -> num_moves++;
+          }
         }
       }
     }
 
     //EN PASSANT left
     if (rank + 1 == p -> en_passant_rank && file - 1 == p -> en_passant_file) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank + 1, 'P', 1);
-      p -> num_moves++;
+      m = move_init(file, rank, file - 1, rank + 1, 'p', TRUE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
 
     //EN PASSANT right
     if (rank + 1 == p -> en_passant_rank && file + 1 == p -> en_passant_file) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank + 1, 'P', 1);
-      p -> num_moves++;
+      m = move_init(file, rank, file + 1, rank + 1, 'p', TRUE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!black_king_checked(&test_check, p->black_king_rank, p->black_king_file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
   }
 
 
 void white_king_moves (struct position * p, char rank, char file) {
 
+  struct move m;
+  struct position test_check;
+
   // UP
   if (rank > 0) {
     //Straight
     if (!is_white(p -> board [rank - 1][file + 0])) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file, rank - 1, 'K', 0);
-      //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-      //printf("%s\n", "");
-      p -> num_moves++;
+      m = move_init(file, rank, file, rank - 1, 'K', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!white_king_checked(&test_check, rank - 1, file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
 
     //Left
     if (file > 0) {
       if (!is_white(p -> board [rank - 1][file - 1])) {
-        p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank - 1, 'K', 0);
-        //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-        //printf("%s\n", "");
-        p -> num_moves++;
+        m = move_init(file, rank, file - 1, rank - 1, 'K', FALSE);
+        memcpy(test_check.board, p->board, sizeof(test_check.board));
+        place_move (&test_check, &m);
+        if (!white_king_checked(&test_check, rank - 1, file - 1)) {
+
+          p -> moves[p -> num_moves] = m;
+          p -> num_moves++;
+        }
       }
     }
 
     if (file + 1 < WID) {
       if (!is_white(p -> board [rank - 1][file + 1])) {
-        p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank - 1, 'K', 0);
-        //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-        //printf("%s\n", "");
-        p -> num_moves++;
+        m = move_init(file, rank, file + 1, rank - 1, 'K', FALSE);
+        memcpy(test_check.board, p->board, sizeof(test_check.board));
+        place_move (&test_check, &m);
+        if (!white_king_checked(&test_check, rank - 1, file + 1)) {
+
+          p -> moves[p -> num_moves] = m;
+          p -> num_moves++;
+        }
       }
     }
   }
@@ -834,28 +1141,40 @@ void white_king_moves (struct position * p, char rank, char file) {
   if (rank < WID - 1) {
     //Straight
     if (!is_white(p -> board [rank + 1][file + 0])) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file, rank + 1, 'K', 0);
-      //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-      //printf("%s\n", "");
-      p -> num_moves++;
+      m = move_init(file, rank, file, rank + 1, 'K', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!white_king_checked(&test_check, rank + 1, file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
 
     //Left
     if (file > 0) {
       if (!is_white(p -> board [rank + 1][file - 1])) {
-        p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank + 1, 'K', 0);
-        //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-        //printf("%s\n", "");
-        p -> num_moves++;
+        m = move_init(file, rank, file - 1, rank + 1, 'K', FALSE);
+        memcpy(test_check.board, p->board, sizeof(test_check.board));
+        place_move (&test_check, &m);
+        if (!white_king_checked(&test_check, rank + 1, file - 1)) {
+
+          p -> moves[p -> num_moves] = m;
+          p -> num_moves++;
+        }
       }
     }
 
     if (file + 1 < WID) {
       if (!is_white(p -> board [rank + 1][file + 1])) {
-        p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank + 1, 'K', 0);
-        //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-        //printf("%s\n", "");
-        p -> num_moves++;
+        m = move_init(file, rank, file + 1, rank + 1, 'K', FALSE);
+        memcpy(test_check.board, p->board, sizeof(test_check.board));
+        place_move (&test_check, &m);
+        if (!white_king_checked(&test_check, rank + 1, file + 1)) {
+
+          p -> moves[p -> num_moves] = m;
+          p -> num_moves++;
+        }
       }
     }
   }
@@ -863,52 +1182,74 @@ void white_king_moves (struct position * p, char rank, char file) {
   // LEFT
   if (file > 0) {
     if (!is_white(p -> board [rank + 0][file - 1])) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank, 'K', 0);
-      //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-      //printf("%s\n", "");
-      p -> num_moves++;
+      m = move_init(file, rank, file - 1, rank, 'K', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!white_king_checked(&test_check, rank, file - 1)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
   }
 
   // RIGHT
   if (file < WID - 1) {
     if (!is_white(p -> board [rank + 0][file + 1])) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank, 'K', 0);
-      //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-      //printf("%s\n", "");
-      p -> num_moves++;
+      m = move_init(file, rank, file + 1, rank, 'K', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!white_king_checked(&test_check, rank, file + 1)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
   }
 }
 
 void black_king_moves (struct position * p, char rank, char file) {
+  struct move m;
+  struct position test_check;
 
   // UP
   if (rank > 0) {
     //Straight
     if (!is_black(p -> board [rank - 1][file + 0])) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file, rank - 1, 'k', 0);
-      //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-      //printf("%s\n", "");
-      p -> num_moves++;
+      m = move_init(file, rank, file, rank - 1, 'k', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!black_king_checked(&test_check, rank - 1, file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
 
     //Left
     if (file > 0) {
       if (!is_black(p -> board [rank - 1][file - 1])) {
-        p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank - 1, 'k', 0);
-        //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-        //printf("%s\n", "");
-        p -> num_moves++;
+        m = move_init(file, rank, file - 1, rank - 1, 'k', FALSE);
+        memcpy(test_check.board, p->board, sizeof(test_check.board));
+        place_move (&test_check, &m);
+        if (!black_king_checked(&test_check, rank - 1, file - 1)) {
+
+          p -> moves[p -> num_moves] = m;
+          p -> num_moves++;
+        }
       }
     }
 
     if (file + 1 < WID) {
       if (!is_black(p -> board [rank - 1][file + 1])) {
-        p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank - 1, 'k', 0);
-        //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-        //printf("%s\n", "");
-        p -> num_moves++;
+        m = move_init(file, rank, file + 1, rank - 1, 'k', FALSE);
+        memcpy(test_check.board, p->board, sizeof(test_check.board));
+        place_move (&test_check, &m);
+        if (!black_king_checked(&test_check, rank - 1, file + 1)) {
+
+          p -> moves[p -> num_moves] = m;
+          p -> num_moves++;
+        }
       }
     }
   }
@@ -917,28 +1258,40 @@ void black_king_moves (struct position * p, char rank, char file) {
   if (rank < WID - 1) {
     //Straight
     if (!is_black(p -> board [rank + 1][file + 0])) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file, rank + 1, 'k', 0);
-      //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-      //printf("%s\n", "");
-      p -> num_moves++;
+      m = move_init(file, rank, file, rank + 1, 'k', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!black_king_checked(&test_check, rank + 1, file)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
 
     //Left
     if (file > 0) {
       if (!is_black(p -> board [rank + 1][file - 1])) {
-        p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank + 1, 'k', 0);
-        //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-        //printf("%s\n", "");
-        p -> num_moves++;
+        m = move_init(file, rank, file - 1, rank + 1, 'k', FALSE);
+        memcpy(test_check.board, p->board, sizeof(test_check.board));
+        place_move (&test_check, &m);
+        if (!black_king_checked(&test_check, rank + 1, file - 1)) {
+
+          p -> moves[p -> num_moves] = m;
+          p -> num_moves++;
+        }
       }
     }
 
     if (file + 1 < WID) {
       if (!is_black(p -> board [rank + 1][file + 1])) {
-        p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank + 1, 'k', 0);
-        //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-        //printf("%s\n", "");
-        p -> num_moves++;
+        m = move_init(file, rank, file + 1, rank + 1, 'k', FALSE);
+        memcpy(test_check.board, p->board, sizeof(test_check.board));
+        place_move (&test_check, &m);
+        if (!black_king_checked(&test_check, rank + 1, file + 1)) {
+
+          p -> moves[p -> num_moves] = m;
+          p -> num_moves++;
+        }
       }
     }
   }
@@ -946,20 +1299,28 @@ void black_king_moves (struct position * p, char rank, char file) {
   // LEFT
   if (file > 0) {
     if (!is_black(p -> board [rank + 0][file - 1])) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file - 1, rank, 'k', 0);
-      //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-      //printf("%s\n", "");
-      p -> num_moves++;
+      m = move_init(file, rank, file - 1, rank, 'k', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!black_king_checked(&test_check, rank, file - 1)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
   }
 
   // RIGHT
   if (file < WID - 1) {
     if (!is_black(p -> board [rank + 0][file + 1])) {
-      p -> moves[p -> num_moves] = move_init(file, rank, file + 1, rank, 'k', 0);
-      //print_move(&p -> moves[p -> num_moves] , p); printf("%c", p -> moves[p -> num_moves].promotion_piece);
-      //printf("%s\n", "");
-      p -> num_moves++;
+      m = move_init(file, rank, file + 1, rank, 'k', FALSE);
+      memcpy(test_check.board, p->board, sizeof(test_check.board));
+      place_move (&test_check, &m);
+      if (!black_king_checked(&test_check, rank, file + 1)) {
+
+        p -> moves[p -> num_moves] = m;
+        p -> num_moves++;
+      }
     }
   }
 }
@@ -982,7 +1343,13 @@ void white_kingside_castle (struct position * p) {
   p->board[7][4] = 'K';
   p->board[7][5] = '_';
 
-  p -> moves[p -> num_moves] = move_init(4, 7, 6, 7, 'K', FALSE);
+  struct move m = move_init(4, 7, 6, 7, 'K', FALSE);
+  struct position test_check;
+  memcpy(test_check.board, p->board, sizeof(test_check.board));
+  place_move (&test_check, &m);
+  if (white_king_checked(&test_check, 7, 6)) return;
+
+  p -> moves[p -> num_moves] = m;
   p -> moves[p -> num_moves].is_castling = TRUE;
   p -> num_moves++;
 }
@@ -1028,7 +1395,13 @@ void white_queenside_castle (struct position * p) {
   p->board[7][4] = 'K';
   p->board[7][3] = '_';
 
-  p -> moves[p -> num_moves] = move_init(4, 7, 2, 7, 'K', FALSE);
+  struct move m = move_init(4, 7, 2, 7, 'K', FALSE);
+  struct position test_check;
+  memcpy(test_check.board, p->board, sizeof(test_check.board));
+  place_move (&test_check, &m);
+  if (white_king_checked(&test_check, 7, 2)) return;
+
+  p -> moves[p -> num_moves] = m;
   p -> moves[p -> num_moves].is_castling = TRUE;
   p -> num_moves++;
 }
@@ -1054,4 +1427,101 @@ void black_queenside_castle (struct position * p) {
   p -> moves[p -> num_moves] = move_init(4, 0, 2, 0, 'k', FALSE);
   p -> moves[p -> num_moves].is_castling = TRUE;
   p -> num_moves++;
+}
+
+void place_move (struct position * pos, struct move * mov) {
+
+
+  if (mov -> promotion_piece == 'x') mov -> promotion_piece = pos -> board [mov -> start_rank][mov -> start_file];
+
+  if (toUpper(pos -> board [mov -> start_rank][mov -> start_file]) == 'K' && abs(mov -> start_file - mov -> end_file) == 2) mov -> is_castling = TRUE;
+  else mov -> is_castling = 0;
+
+  pos -> board [mov -> end_rank][mov -> end_file] = mov -> promotion_piece;
+  pos -> board [mov -> start_rank][mov -> start_file] = '_';
+
+  if (mov -> is_en_passant) {
+    if (pos -> side_move == 'w') pos -> board [mov -> end_rank - 1][mov -> end_file] = '_';
+    else pos -> board [mov -> end_rank - 1][mov -> end_file] = '_';
+  }
+
+  if (mov -> is_castling) {
+    if (mov -> end_rank == 7 && mov -> end_file == 6) { // white king side castling
+      pos -> board [7][7] = '_';
+      pos -> board [7][5] = 'R';
+      pos -> white_can_castle_kingside = FALSE;
+      pos -> white_can_castle_queenside = FALSE;
+    } else if (mov -> end_rank == 7 && mov -> end_file == 2) { // white queen side castling
+      pos -> board [7][0] = '_';
+      pos -> board [7][3] = 'R';
+      pos -> white_can_castle_kingside = FALSE;
+      pos -> white_can_castle_queenside = FALSE;
+    } else if (mov -> end_rank == 0 && mov -> end_file == 6) { // black king side castling
+      pos -> board [0][7] = '_';
+      pos -> board [0][5] = 'r';
+      pos -> black_can_castle_kingside = FALSE;
+      pos -> black_can_castle_queenside = FALSE;
+    } else {                                                                          // black queen side castling
+      pos -> board [0][0] = '_';
+      pos -> board [0][3] = 'r';
+      pos -> black_can_castle_kingside = FALSE;
+      pos -> black_can_castle_queenside = FALSE;
+    }
+  }
+
+  // Check Kings and Rooks to see if castling option exists
+
+  if (pos -> board [7][4] != 'K') {
+    pos -> white_can_castle_kingside = FALSE;
+    pos -> white_can_castle_queenside = FALSE;
+  } else {
+    if (pos -> board [7][7] != 'R') {
+      pos -> white_can_castle_kingside = FALSE;
+    } if (pos -> board [7][0] != 'R') {
+      pos -> white_can_castle_queenside = FALSE;
+    }
+}
+
+  if (pos -> board [0][4] != 'k'){
+    pos -> black_can_castle_kingside = FALSE;
+    pos -> black_can_castle_queenside = FALSE;
+  } else {
+    if (pos -> board [0][7] != 'r') {
+      pos -> black_can_castle_kingside = FALSE;
+    } if (pos -> board [0][0] != 'r') {
+      pos -> black_can_castle_queenside = FALSE;
+    }
+}
+
+  if (pos -> side_move == 'w') {
+
+    if (mov -> start_rank - mov -> end_rank == 2 && pos -> board[mov -> end_rank][mov -> end_file] == 'P') {
+      pos -> en_passant_rank = mov -> start_rank -  1;
+      pos -> en_passant_file = mov -> end_file;
+    } else {
+      pos -> en_passant_rank = -1;
+      pos -> en_passant_rank = -1;
+    }
+  } else {
+
+    if (mov -> start_rank - mov -> end_rank == -2 && pos -> board[mov -> end_rank][mov -> end_file] == 'p') {
+      pos -> en_passant_rank = mov ->start_rank +  1;
+      pos -> en_passant_file = mov ->end_file;
+    } else {
+      pos -> en_passant_rank = -1;
+      pos -> en_passant_rank = -1;
+    }
+  }
+
+  for (int i = 0; i < LEN; i++) {
+    for (int j = 0; j < WID; j++) {
+      if (pos->board[i][j] == 'K') {
+        pos->white_king_rank = i;
+        pos->white_king_file = j;
+      } else if (pos->board[i][j] == 'k') {
+        pos->black_king_rank = i;
+        pos->black_king_file = j;
+      }
+    }
+  }
 }

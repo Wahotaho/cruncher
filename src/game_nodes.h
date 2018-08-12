@@ -3,7 +3,7 @@ struct node {
 
   struct position pos;
 
-  int is_pruned;
+  _Bool is_pruned;
   int depth;
 
   struct node * neighbor;
@@ -14,9 +14,9 @@ struct node {
 struct node * create_node (struct position p) {
   struct node * n = malloc(sizeof(struct node));
   n->pos = p;
-  n->ancestor = NULL;
-  n->is_pruned = FALSE;
-  n->neighbor = NULL;
+  //n->ancestor = NULL;
+  //n->is_pruned = FALSE;
+  //n->neighbor = NULL;
   n->children = malloc(sizeof(root) * POSSIBLE_MOVES);
   return n;
 }

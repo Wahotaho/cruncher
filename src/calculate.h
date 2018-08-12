@@ -1,6 +1,6 @@
 void go_infinite (struct position p) {
   root = create_node(p);
-  int horizon = 4;
+  int horizon = 5;
 
   heads[0] = root;
   struct node * n;
@@ -8,25 +8,69 @@ void go_infinite (struct position p) {
   n = heads[0];
   create_child_nodes (n);
 
+  for (int k = 0; k < n ->pos.num_moves; k++) {
+    printf("%f ", n -> children[k]->pos.position_value);
+    print_move(&n ->pos.moves[k], &n ->pos);
+   printf("%s\n", "");
+  }
+
   int i = 1;
 
   for (; i < horizon; i++) {
     calculate_next_ply (i);
   }
 
-  n = heads[horizon];
-  i = 1;
-  double ma = n->pos.position_value;
+  i = horizon - 1;
+  while (i != -1) {
+    n = heads[i];
+    calculate_depth_minimax_val(n);
+    i--;
+  }
+
+  //
+  n=heads[0];
+
+  double ma = 0.0;
+
+  if (n->pos.side_move == 'w') ma = max (n);
+  else ma = min (n);
+
+  n=heads[1];
+
+  i = 0;
   while (n != NULL) {
-    printf("%d\n", i);
-    //printf("previous moves  %d\n", n->pos.previous_num_moves);
-    //printf("current moves    %d\n", n->pos.num_moves);
-    //printf("%f\n", n->pos.position_value);
-    print_position(&n->pos);
-    if (n->pos.position_value > ma) ma = n->pos.position_value;
+    if (n->pos.position_value == ma) break;
     n = n -> neighbor;
     i++;
   }
+
+  printf("%f\n", n->pos.position_value);
+  printf("ma  %f\n", ma);
+  print_position(&n->pos);
+
+  n = heads[0];
+
+ for (int k = 0; k < n ->pos.num_moves; k++) {
+    printf("%f ", n -> children[k]->pos.position_value);
+    print_move(&n ->pos.moves[k], &n ->pos);
+    printf("%s\n", "");
+  }
+}
+
+void calculate_depth_minimax_val (struct node * n) {
+
+  if (n -> pos.side_move == 'w') {
+      while (n != NULL) {
+        n -> pos.position_value = max (n);
+        n = n -> neighbor;
+      }
+  } else {
+    while (n != NULL) {
+      n -> pos.position_value = min (n);
+      n = n -> neighbor;
+    }
+  }
+
 }
 
 void calculate_next_ply (int i) {
@@ -44,27 +88,28 @@ void calculate_next_ply (int i) {
 }
 
 double max (struct node * n) {
+  if (n->pos.num_moves == 0 || n->is_pruned || n->pos.game_ended) return n->pos.position_value;
   double ret = n->children[0]->pos.position_value;
 
-  for (int i = 1; i < n->pos.num_moves; i++) {
-    if (ret < n->children[i]->pos.position_value) ret = n->children[0]->pos.position_value;
-  }
 
+  for (int i = 1; i < n->pos.num_moves; i++) {
+    if (ret < n->children[i]->pos.position_value) ret = n->children[i]->pos.position_value;
+  }
   return ret;
 }
 
 double min (struct node * n) {
+  if (n->pos.num_moves == 0 || n->is_pruned || n->pos.game_ended) return n->pos.position_value;
+
   double ret = n->children[0]->pos.position_value;
-
   for (int i = 1; i < n->pos.num_moves; i++) {
-    if (ret > n->children[i]->pos.position_value) ret = n->children[0]->pos.position_value;
+    if (ret > n->children[i]->pos.position_value) ret = n->children[i]->pos.position_value;
   }
-
   return ret;
 }
 
 void create_child_nodes (struct node  * n) {
-  if (n->pos.num_moves == 0 || n->is_pruned) return;
+  if (n->pos.num_moves == 0 || n->is_pruned || n->pos.game_ended) return;
 
   struct position  working_position = n->pos;
   working_position.position_value = 0;
@@ -94,8 +139,9 @@ void create_child_nodes (struct node  * n) {
     if (abs_double(n -> children[i]->pos.position_value) > CHECKMATE_VAL) {
       n -> children[i]->pos.game_ended = TRUE;
       n -> children[0]->is_pruned = TRUE;
+      n -> children[i]->pos.num_moves = 0;
     }
   }
 
-  tails[n -> children[0] -> depth] = n -> children[n -> pos.num_moves - 1];
+  tails[n -> children[0] -> depth] = n -> children[n -> pos.num_moves -  1];
 }

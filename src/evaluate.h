@@ -9,15 +9,26 @@ double move_weight = .01;
 
 void evaluate_position (struct position * p) {
 
+ if (p->num_moves == 0) {
+   if (white_king_checked(p , p->white_king_rank,p->white_king_file) || black_king_checked(p , p->black_king_rank,p->black_king_file)) {
+     if (p -> side_move == 'w') {
+       p-> position_value = -KING_VAL;
+     } else {
+       p-> position_value = KING_VAL;
+     }
+
+     return;
+   } else {
+     p-> position_value = 0;
+     return;
+   }
+  }
+
   int i; int j;
 
   for (i = 0; i < LEN; i++) {
     for (j = 0; j < WID; j++) {
-      if (p -> board[i][j] == 'K') {
-        p -> material_value += KING_VAL;
-      } else if (p -> board[i][j] == 'k') {
-        p -> material_value -= KING_VAL;
-      } else if (p -> board[i][j] == 'Q') {
+      if (p -> board[i][j] == 'Q') {
         p -> material_value += QUEEN_VAL;
       } else if (p -> board[i][j] == 'q') {
         p -> material_value -= QUEEN_VAL;
@@ -41,14 +52,11 @@ void evaluate_position (struct position * p) {
     }
   }
 
+
   if (p -> side_move == 'w') {
     p -> mobility_value = move_weight*(p ->num_moves - p ->previous_num_moves);
-    //printf("%f\n", p -> mobility_value);
-    //printf("%s\n", "");
   } else {
     p -> mobility_value = move_weight*(p ->previous_num_moves - p ->num_moves);
-    //printf("%f\n", p -> mobility_value);
-    //printf("%s\n", "");
   }
 
   p-> position_value = p -> material_value + p -> mobility_value;

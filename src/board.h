@@ -1,3 +1,4 @@
+
 void load_board (struct position * pos) {
   char * pos_array[LEN];
 
